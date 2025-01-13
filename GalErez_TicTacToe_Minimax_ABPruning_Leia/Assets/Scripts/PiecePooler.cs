@@ -22,7 +22,8 @@ public class PiecePooler : MonoBehaviour
 
     private ObjectPool<GameObject> InitPool(TileType pieceType)
     {
-        return new ObjectPool<GameObject> (
+        Debugger.Log("Start Initializing pool");
+        ObjectPool<GameObject> pool = new (
             createFunc: () => CreatePiece(pieceType),
             actionOnGet: piece => OnGetPiece(piece, true, null),
             actionOnRelease: piece => OnReturnPiece(piece),
@@ -31,6 +32,19 @@ public class PiecePooler : MonoBehaviour
             defaultCapacity: _defaultCapacity,
             maxSize: _maxSize
         );
+
+        Debugger.Log("created pool");
+        for (int i = 0; i < _defaultCapacity; i++)
+        {
+            Debugger.Log("trying to create piece");
+
+            GameObject piece = CreatePiece(pieceType); // Create a new instance
+            Debugger.Log("piece created");
+            pool.Release(piece);
+            Debugger.Log("piece added to pool");
+        }
+
+        return pool;
     }
     private GameObject CreatePiece(TileType type)
     {
@@ -39,6 +53,7 @@ public class PiecePooler : MonoBehaviour
         boardPiece.transform.SetParent(transform);
         boardPiece.transform.localPosition = Vector3.zero;
         boardPiece.SetActive(false); // Deactivate the piece by default
+        Debugger.Log("piece created -1");
         return boardPiece;
     }
 
