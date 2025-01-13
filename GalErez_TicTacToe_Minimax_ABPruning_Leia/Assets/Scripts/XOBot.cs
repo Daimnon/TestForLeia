@@ -6,15 +6,12 @@ public class XOBot : MonoBehaviour
 
     public int Minimax(GameManager gameState, int depth, bool isMaximizingPlayer)
     {
-        if (gameState.GameOver())
-            return gameState.GetScore();
-
-        if (depth >= _maxDepthSearch)
-            return 0; // Arbitrary depth limit - should check why
+        if (gameState.IsGameOver()) return gameState.GetStateScore();
+        if (depth >= _maxDepthSearch) return gameState.GetStateScore();
 
         int bestScore = isMaximizingPlayer ? int.MinValue : int.MaxValue;
 
-        foreach (var move in gameState.GetAvailableMoves())
+        foreach (Vector2Int move in gameState.GetAvailableMoves())
         {
             gameState.MakeMove(move);
             int score = Minimax(gameState, depth + 1, !isMaximizingPlayer);

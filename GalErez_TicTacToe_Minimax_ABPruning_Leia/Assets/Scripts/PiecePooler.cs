@@ -36,10 +36,9 @@ public class PiecePooler : MonoBehaviour
     {
         GameObject boardPiece = type == TileType.X ? Instantiate(_xPrefab) : Instantiate(_oPrefab);
         // Set the parent to PiecePooler and ensure the position is zeroed
-        boardPiece.transform.SetParent(this.transform);
+        boardPiece.transform.SetParent(transform);
         boardPiece.transform.localPosition = Vector3.zero;
         boardPiece.SetActive(false); // Deactivate the piece by default
-
         return boardPiece;
     }
 
