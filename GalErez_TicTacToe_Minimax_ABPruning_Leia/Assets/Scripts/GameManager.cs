@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 {
     private TileType[,] _board = new TileType[3, 3];
     private TileType _currentPlayer;
+    private TileType _playerSymbol;
 
     [Header("Setup Components")]
     [SerializeField] private PiecePooler piecePooler;
@@ -36,14 +37,10 @@ public class GameManager : MonoBehaviour
     {
         if (_isGameActive)
         {
-            if (_currentPlayer == TileType.X)
-            {
+            if (_currentPlayer == _playerSymbol) 
                 HandlePlayerInput();
-            }
-            else if (_currentPlayer == TileType.O)
-            {
+            else 
                 MakeBotMove();
-            }
         }
 
         // if it was a coroutine it would look like so:
@@ -75,12 +72,14 @@ public class GameManager : MonoBehaviour
         }
 
         _currentPlayer = Random.value > 0.5f ? TileType.X : TileType.O;
+        _playerSymbol = _currentPlayer;
         _isGameActive = true;
         UpdateBoardVisuals();
     }
     private void ChooseNextPlayer()
     {
         _currentPlayer = _currentPlayer == TileType.X ? TileType.O : TileType.X;
+        _playerSymbol = _currentPlayer;
     }
 
     private void UpdateBoardVisuals()
@@ -103,6 +102,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            Debugger.Log("Input recieved");
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
