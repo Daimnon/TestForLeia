@@ -15,7 +15,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &4145339543758861087
 Transform:
@@ -44,3 +44,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6295afe43f1480469e17f0d50072c53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _piecePooler: {fileID: 0}
+  _boardPositions:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _bot: {fileID: 0}
+  _botMoveDelay: 1
+  _isDebugEnabled: 1

@@ -28,7 +28,7 @@ public class XOBot : MonoBehaviour
         int bestScore = int.MinValue;
         Vector2Int bestMove = Vector2Int.zero;
 
-        foreach (var move in gameState.GetAvailableMoves())
+        foreach (Vector2Int move in gameState.GetAvailableMoves())
         {
             gameState.MakeMove(move);
             int score = Minimax(gameState, 0, false);

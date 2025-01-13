@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.UIElements;
+using Unity.Burst.CompilerServices;
+using System.Collections;
 
 public enum TileType
 {
@@ -11,19 +12,21 @@ public enum TileType
 
 public class GameManager : MonoBehaviour
 {
+    private const int BOARD_AXIS_LENGTH = 3;
+    /*private const string X_PIECE_TAG = "xPiece";
+    private const string O_PIECE_TAG = "oPiece";*/
+    private const string EMPTY_TILE_TAG = "emptyTile";
+
     private TileType[,] _board = new TileType[3, 3];
     private TileType _currentPlayer;
     private TileType _playerSymbol;
+    private bool _isInputBlocked = false;
 
     [Header("Setup Components")]
-    [SerializeField] private PiecePooler piecePooler;
-    [SerializeField] private Transform[] boardPositions;
+    [SerializeField] private PiecePooler _piecePooler;
+    [SerializeField] private Transform[] _boardPositions;
     [SerializeField] private XOBot _bot;
-
-    private bool _isGameActive = true;
-    public bool IsGameActive => _isGameActive;
-
-    private const int BOARD_AXIS_LENGTH = 3;
+    [SerializeField] private float _botMoveDelay = 1.0f;
 
     [Header("Debugging")]
     [SerializeField] private bool _isDebugEnabled = true;
@@ -32,33 +35,6 @@ public class GameManager : MonoBehaviour
     {
         Debugger.IsDebugEnabled = _isDebugEnabled; 
         InitGame();
-    }
-    private void Update() // wanted to use this instead: "IEnumerator CheckTurnRoutine()" but looks like the coroutine overhead will be a greater cost than using the update method 
-    {
-        if (_isGameActive)
-        {
-            if (_currentPlayer == _playerSymbol) 
-                HandlePlayerInput();
-            else 
-                MakeBotMove();
-        }
-
-        // if it was a coroutine it would look like so:
-        /*private IEnumerator CheckTurnRoutine()
-        {
-            if (!_isGameActive) yield break;
-
-            if (_currentPlayer == TileType.X && _isGameActive)
-            {
-                HandlePlayerInput();
-            }
-            else if (_currentPlayer == TileType.O && _isGameActive)
-            {
-                MakeAIMove();
-            }
-            yield return null;
-        }*/
-        // and would be called after each turn so basically it will work most of the time, so starting and stopping the Coroutine will be expansive IMO.
     }
 
     private void InitGame() // clear board and reroll player symbol 
@@ -71,59 +47,74 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        SetupNewHuman();
+        UpdateBoardVisuals();
+        StartCoroutine(HumanInputsRoutine());
+    }
+    private void SetupNewHuman()
+    {
         _currentPlayer = Random.value > 0.5f ? TileType.X : TileType.O;
         _playerSymbol = _currentPlayer;
-        _isGameActive = true;
-        UpdateBoardVisuals();
     }
-    private void ChooseNextPlayer()
+    private IEnumerator HumanInputsRoutine()
     {
-        _currentPlayer = _currentPlayer == TileType.X ? TileType.O : TileType.X;
-        _playerSymbol = _currentPlayer;
+        while (!HandlePlayerInput())
+        {
+            yield return null;
+        }
+
+        StartCoroutine(BotTurnRoutine(_botMoveDelay));
     }
 
+    private IEnumerator BotTurnRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        MakeBotMove();
+    }
     private void UpdateBoardVisuals()
     {
         for (int i = 0; i < BOARD_AXIS_LENGTH; i++)
         {
-            for (int j = 0; j < _board.GetLength(1); j++)
+            for (int j = 0; j < BOARD_AXIS_LENGTH; j++)
             {
                 if (_board[i, j] != TileType.Empty)
                 {
                     TileType type = _board[i, j];
-                    GameObject piece = piecePooler.GetPiece(type);
-                    piece.transform.position = boardPositions[i * BOARD_AXIS_LENGTH + j].position;
+                    GameObject piece = _piecePooler.GetPiece(type);
+                    Transform parentTile = _boardPositions[i * BOARD_AXIS_LENGTH + j]; // formula to get the right tile in the array from with a 3x3 board
+                    piece.transform.SetParent(parentTile);
+                    piece.transform.position = Vector2.zero; 
                 }
             }
         }
     }
 
-    private void HandlePlayerInput() // need to change to Enhanced Touch
+    private bool HandlePlayerInput() // need to change to Enhanced Touch
     {
+        if (_isInputBlocked) return false;
+
         if (Input.GetMouseButtonDown(0))
         {
             Debugger.Log("Input recieved");
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            float maxRayDistance = 100f;
+            int layerMask = LayerMask.GetMask("Tiles");
+            RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero, maxRayDistance, layerMask);
+
+            if (hit.collider != null && hit.collider.CompareTag(EMPTY_TILE_TAG))
             {
-                for (int i = 0; i < boardPositions.Length; i++)
-                {
-                    if (hit.transform == boardPositions[i])
-                    {
-                        Vector2Int move = new Vector2Int(i / BOARD_AXIS_LENGTH, i % BOARD_AXIS_LENGTH);
-                        if (_board[move.x, move.y] == TileType.Empty)
-                        {
-                            MakeMove(move);
-                            _isGameActive = IsGameOver();
-                            return;
-                        }
-                    }
-                }
+                Vector2Int movePos = new((int)hit.transform.position.x, (int)hit.transform.position.y);
+                MakeMove(movePos);
+                _isInputBlocked = true;
+                return true;
             }
         }
+        return false;
     }
     private void MakeBotMove()
     {
+        _isInputBlocked = false;
         Vector2Int aiMove = _bot.GetBestMove(this);
         MakeMove(aiMove);
         GetStateScore();
@@ -211,8 +202,8 @@ public class GameManager : MonoBehaviour
         List<Vector2Int> moves = new List<Vector2Int>();
 
         // no open scope cause doing only one action and won't be expanded. I think it's more readable that way cause you instantly know there is only one action at the end.
-        for (int i = 0; i < _board.GetLength(0); i++)
-            for (int j = 0; j < _board.GetLength(1); j++)
+        for (int i = 0; i < BOARD_AXIS_LENGTH; i++)
+            for (int j = 0; j < BOARD_AXIS_LENGTH; j++)
                 if (_board[i, j] == TileType.Empty)
                     moves.Add(new Vector2Int(i, j));
 
@@ -221,13 +212,12 @@ public class GameManager : MonoBehaviour
     public void MakeMove(Vector2Int move)
     {
         _board[move.x, move.y] = _currentPlayer;
-        ChooseNextPlayer();
+        _currentPlayer = _currentPlayer == TileType.X ? TileType.O : TileType.X;
         UpdateBoardVisuals();
     }
     public void UndoMove(Vector2Int move)
     {
         _board[move.x, move.y] = TileType.Empty;
-        ChooseNextPlayer();
         UpdateBoardVisuals();
     }
 
