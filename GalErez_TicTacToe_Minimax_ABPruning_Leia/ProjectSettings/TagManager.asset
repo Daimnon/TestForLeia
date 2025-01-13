@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Dynamic Light User
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BoardDecoration
+    uniqueID: 2393047111
+    locked: 0
+  - name: Piece
+    uniqueID: 817132427
+    locked: 0
+  - name: VictoryLine
+    uniqueID: 4094837569
     locked: 0

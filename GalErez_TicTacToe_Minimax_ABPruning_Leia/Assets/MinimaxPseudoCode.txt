@@ -1,0 +1,71 @@
+Source: https://www.youtube.com/watch?v=SLgZhpDsrfc - Minimax: How Computers Play Games
+
+
+public enum PlayerType
+{
+	O,
+	X
+}
+
+public class GameState
+{
+	private bool _isGameOver = false;
+	public bool IsGameOver => _isGameOver;
+
+	private bool _isFavorableToX = false;
+	public bool IsFavorableToX => _isFavorableToX;
+	
+	private bool _isFavorableToO = false;
+	public bool IsFavorableToO => _isFavorableToO;
+
+	private PlayerType _currentPlayerType;
+	public PlayerType CurrentPlayerType => _currentPlayerType;
+}
+
+private const int player MAX = 
+
+
+
+private bool Terminal(bool conditionForGameOver) // check if terminal state for use in Minimax
+{
+	if (conditionForGameOver) return true;
+	else return false;
+}
+
+private int Value(GameState s) // get terminal state value
+{
+	if (s.IsFavorableToX) return 1;
+	else if (s.IsFavorableToO) return -1;
+	else return 0;
+}
+
+private PlayerType Player(GameState s)
+{
+	return s.CurrentPlayerType;
+}
+
+private int Minimax(s)
+{
+	if (Terminal(s))
+		return Value(s);
+
+	if (Player(s) == MAX)
+	{
+		value = -infinity;
+		for (a in Actions(s))
+		{
+			value = Max(value, Minimax(Result(s,a)));
+			return value;
+		}
+	}
+
+	if (Player(s) == MIN)
+	{
+		value = infinity;
+		for (a in Actions(s))
+		{
+			value = Min(value, Minimax(Result(s,a)));
+			return value;
+		}
+	}
+}
