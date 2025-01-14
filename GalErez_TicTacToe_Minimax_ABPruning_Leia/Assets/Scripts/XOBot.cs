@@ -6,19 +6,27 @@ public class XOBot : MonoBehaviour
 
     public int Minimax(GameManager gameState, int depth, bool isMaximizingPlayer)
     {
-        if (gameState.IsGameOver()) return gameState.GetStateScore();
-        if (depth >= _maxDepthSearch) return gameState.GetStateScore();
+        if (gameState.IsGameOver() || depth >= _maxDepthSearch)
+        {
+            return gameState.GetStateScore();
+        }
 
         int bestScore = isMaximizingPlayer ? int.MinValue : int.MaxValue;
 
         foreach (Vector2Int move in gameState.GetAvailableMoves())
         {
             gameState.MakeMove(move);
-            Debug.Log($"Made move: {move}. Recursively calling Minimax.");
             int score = Minimax(gameState, depth + 1, !isMaximizingPlayer);
             gameState.UndoMove(move);
 
-            bestScore = isMaximizingPlayer ? Mathf.Max(bestScore, score) : Mathf.Min(bestScore, score);
+            if (isMaximizingPlayer)
+            {
+                bestScore = Mathf.Max(bestScore, score);
+            }
+            else
+            {
+                bestScore = Mathf.Min(bestScore, score);
+            }
         }
 
         return bestScore;
@@ -31,9 +39,12 @@ public class XOBot : MonoBehaviour
 
         foreach (Vector2Int move in gameState.GetAvailableMoves())
         {
+            Debugger.Log($"Evaluating move: {move}");
             gameState.MakeMove(move);
-            int score = Minimax(gameState, 0, false);
+            int score = Minimax(gameState, 1, false);  // Make sure depth starts from 1
             gameState.UndoMove(move);
+
+            Debugger.Log($"Move {move} resulted in score: {score}");
 
             if (score > bestScore)
             {
@@ -42,6 +53,7 @@ public class XOBot : MonoBehaviour
             }
         }
 
+        gameState.SkipVisualUpdates = false;
         return bestMove;
     }
 }

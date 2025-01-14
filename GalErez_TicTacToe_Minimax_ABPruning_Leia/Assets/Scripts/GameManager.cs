@@ -26,9 +26,15 @@ public class GameManager : MonoBehaviour
     private TileType _playerSymbol;
     private bool _isInputBlocked = false;
 
+    private bool _skipVisualUpdates = false;
+    public bool SkipVisualUpdates { get => _skipVisualUpdates; set => _skipVisualUpdates = value; }
+
     [Header("Setup Components")]
     [SerializeField] private PiecePooler _piecePooler;
-    [SerializeField] private Transform[] _boardPositions;
+    [SerializeField] private Transform[] _boardPositionsLeft;
+    [SerializeField] private Transform[] _boardPositionsMid;
+    [SerializeField] private Transform[] _boardPositionsRight;
+    [SerializeField] private Transform[,] _boardPositions;
     [SerializeField] private XOBot _bot;
     [SerializeField] private float _botMoveDelay = 1.0f;
 
@@ -61,8 +67,15 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        _boardPositions = new Transform[BOARD_AXIS_LENGTH, BOARD_AXIS_LENGTH];
+        for (int i = 0; i < BOARD_AXIS_LENGTH; i++)
+        {
+            _boardPositions[0, i] = _boardPositionsLeft[i];
+            _boardPositions[1, i] = _boardPositionsMid[i];
+            _boardPositions[2, i] = _boardPositionsRight[i];
+        }
+
         SetupNewHuman();
-        UpdateBoardVisuals();
     }
     private void SetupNewHuman()
     {
@@ -84,10 +97,13 @@ public class GameManager : MonoBehaviour
                 if (_board[i, j] != TileType.Empty)
                 {
                     TileType type = _board[i, j];
-                    GameObject piece = _piecePooler.GetPiece(type);
-                    Transform parentTile = _boardPositions[i * BOARD_AXIS_LENGTH + j]; // formula to get the right tile in the array from with a 3x3 board
-                    piece.transform.SetParent(parentTile);
-                    piece.transform.position = Vector2.zero; 
+                    Transform parentTile = _boardPositions[i, j]; // formula to get the right tile in the array from with a 3x3 board
+
+                    if (parentTile.childCount < 1)
+                    {
+                        GameObject piece = _piecePooler.GetPiece(type, parentTile, true);
+                        Debug.Log($"Drawing piece of type: {type}");
+                    }
                 }
             }
         }
@@ -121,6 +137,9 @@ public class GameManager : MonoBehaviour
         _isInputBlocked = false;
         Vector2Int aiMove = _bot.GetBestMove(this);
         MakeMove(aiMove);
+        TileType oppositeOfCurrent = _currentPlayer == TileType.X ? TileType.O : TileType.X;
+        Debug.Log($"Bot placed a piece of type: {oppositeOfCurrent} at: {aiMove}");
+
         GetStateScore();
     }
 
@@ -141,6 +160,15 @@ public class GameManager : MonoBehaviour
 
 
     #region Modified code form ChatGPT, comments are mine.
+    private bool IsBoardFull()
+    {
+        foreach (TileType tile in _board)
+        {
+            if (tile == TileType.Empty) // If any spot is empty, the board isn't full
+                return false;
+        }
+        return true; // If no empty spots are found, the board is full
+    }
     private int EvaluatePerPiece()
     {
         int xScore = 0;
@@ -167,36 +195,50 @@ public class GameManager : MonoBehaviour
         xScore += EvaluationMethod(new Vector2Int(0, 2), new Vector2Int(1, 1), new Vector2Int(2, 0), TileType.X);
         oScore += EvaluationMethod(new Vector2Int(0, 2), new Vector2Int(1, 1), new Vector2Int(2, 0), TileType.O);
 
+        // Draw detection: if board is full and no one is winning, it's a tie
+        if (IsBoardFull() && xScore == 0 && oScore == 0)
+        {
+            return 0; // Tie
+        }
+
         // Return the difference in scores, indicating the leading player
         if (xScore > oScore) return 1; // X is leading
         if (oScore > xScore) return -1; // O is leading
         return 0; // No one is leading
     }
-    private int EvaluationMethod(Vector2Int a, Vector2Int b, Vector2Int c, TileType piece) // just really didn't want to spend the time to make this evaluation.
+    private int EvaluationMethod(Vector2Int a, Vector2Int b, Vector2Int c, TileType piece)
     {
-        TileType[] line = new TileType[BOARD_AXIS_LENGTH]; // create an array for the line (row, column, or diagonal)
+        TileType[] line = new TileType[BOARD_AXIS_LENGTH]; // Create an array for the line (row, column, or diagonal)
         line[0] = _board[a.x, a.y];
         line[1] = _board[b.x, b.y];
         line[2] = _board[c.x, c.y];
 
-        // track how many slots are occupied by the player and how many are empty for all partys
+        // Track counts for X, O, and empty
         int xCount = 0;
-        int emptyCount = 0;
         int oCount = 0;
+        int emptyCount = 0;
 
         foreach (TileType tileType in line)
         {
-            if (tileType == piece) xCount++;
-            else if (tileType == TileType.Empty) emptyCount++;
-            else oCount++;
+            if (tileType == TileType.X) xCount++;
+            else if (tileType == TileType.O) oCount++;
+            else emptyCount++;
         }
 
-        // evaluate actual score
-        if (xCount == 3) return 1;  // x wins
-        if (oCount == 3) return -1; // o wins
-        if (xCount == 2 && emptyCount == 1) return 1; // x has 2 pieces and 1 empty space, they are leaning toward victory
-        if (oCount == 2 && emptyCount == 1) return -1; // o has 2 pieces and 1 empty space, they are leaning toward victory
-        return 0; // no leader
+        // If the line contains X, O, and an empty tile, return 0 (neutral scenario)
+        if (xCount == 1 && oCount == 1 && emptyCount == 1)
+        {
+            return 0;
+        }
+
+        // Score based on favorable positions
+        if (xCount == 3) return 1;  // X wins
+        if (oCount == 3) return -1; // O wins
+        if (xCount == 2 && emptyCount == 1) return 1;  // X leaning toward victory
+        if (oCount == 2 && emptyCount == 1) return -1; // O leaning toward victory
+
+        // Default case: no clear advantage
+        return 0;
     }
     #endregion
 
@@ -213,16 +255,20 @@ public class GameManager : MonoBehaviour
 
         return moves;
     }
+
     public void MakeMove(Vector2Int move)
     {
         _board[move.x, move.y] = _currentPlayer;
-        _currentPlayer = _currentPlayer == TileType.X ? TileType.O : TileType.X;
-        UpdateBoardVisuals();
+
+        if (!_skipVisualUpdates)
+        {
+            _currentPlayer = _currentPlayer == TileType.X ? TileType.O : TileType.X;
+            UpdateBoardVisuals();
+        }
     }
     public void UndoMove(Vector2Int move)
     {
         _board[move.x, move.y] = TileType.Empty;
-        UpdateBoardVisuals();
     }
 
     /// <returns>True if condition for CheckWin met or no more moves availabe</returns>
@@ -258,9 +304,10 @@ public class GameManager : MonoBehaviour
 
         if (hit.collider != null && hit.collider.CompareTag(EMPTY_TILE_TAG))
         {
-            Vector2Int movePos = new((int)hit.transform.position.x, (int)hit.transform.position.y);
+            Vector2Int movePos = new((int)hit.transform.position.x +1, (int)hit.transform.position.y +1); // So I can choose the right move based on the transform position
             MakeMove(movePos);
             _isInputBlocked = true;
+            _skipVisualUpdates = true;
             StartCoroutine(BotTurnRoutine(_botMoveDelay));
         }
     }
