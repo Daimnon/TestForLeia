@@ -1282,7 +1282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7552674652111244876, guid: deebc4a7c52b94e47b6da80521cb94c7, type: 3}
       propertyPath: _maxDepthSearch
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
