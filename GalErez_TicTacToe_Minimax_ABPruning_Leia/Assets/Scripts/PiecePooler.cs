@@ -17,23 +17,28 @@ public class PiecePooler : MonoBehaviour
 
     private void Awake() // init pools
     {
-        _xPool = InitPool(TileType.X);
-        _oPool = InitPool(TileType.O);
-    }
 
-    private ObjectPool<GameObject> InitPool(TileType pieceType)
-    {
-        Debugger.Log("Start Initializing pool");
-        ObjectPool<GameObject> pool = new (
-            createFunc: () => CreatePiece(pieceType),
-            actionOnGet: piece => OnGetPiece(piece, true, null),
-            actionOnRelease: piece => OnReturnPiece(piece),
+        _xPool = new ObjectPool<GameObject>(
+            createFunc: () => CreatePiece(TileType.X),
+            actionOnGet: xPiece => OnGetPiece(xPiece, true), // action on Get
+            actionOnRelease: xPiece => OnReturnPiece(xPiece),
             actionOnDestroy: Destroy,
             collectionCheck: false,
             defaultCapacity: _defaultCapacity,
-            maxSize: _maxSize
-        );
+            maxSize: _maxSize);
 
+        _oPool = new ObjectPool<GameObject>(
+            createFunc: () => CreatePiece(TileType.O),
+            actionOnGet: oPiece => OnGetPiece(oPiece, true), // action on Get
+            actionOnRelease: oPiece => OnReturnPiece(oPiece),
+            actionOnDestroy: Destroy,
+            collectionCheck: false,
+            defaultCapacity: _defaultCapacity,
+            maxSize: _maxSize);
+    }
+
+    /*private void InitPool(ObjectPool<GameObject> pool, TileType pieceType)
+    {
         Debugger.Log("created pool");
         for (int i = 0; i < _defaultCapacity; i++)
         {
@@ -44,18 +49,33 @@ public class PiecePooler : MonoBehaviour
             pool.Release(piece);
             Debugger.Log("piece added to pool");
         }
-
-        return pool;
+    }*/
+    private void SetupPiece(GameObject piece)
+    {
+        piece.transform.SetParent(transform);
+        piece.transform.localPosition = Vector2.zero;
+        piece.SetActive(false); 
     }
     private GameObject CreatePiece(TileType type)
     {
-        GameObject boardPiece = type == TileType.X ? Instantiate(_xPrefab) : Instantiate(_oPrefab);
-        // Set the parent to PiecePooler and ensure the position is zeroed
-        boardPiece.transform.SetParent(transform);
-        boardPiece.transform.localPosition = Vector3.zero;
-        boardPiece.SetActive(false); // Deactivate the piece by default
-        Debugger.Log("piece created -1");
-        return boardPiece;
+        GameObject piece = null;
+        if (type == TileType.X)
+        {
+            if (_xPool.CountAll >= _defaultCapacity) return null;
+            piece = Instantiate(_xPrefab);
+            SetupPiece(piece);
+            _xPool.Release(piece);
+            Debugger.Log("xPiece created");
+        }
+        else if (type == TileType.O)
+        {
+            if (_oPool.CountAll >= _defaultCapacity) return null;
+            piece = Instantiate(_oPrefab);
+            SetupPiece(piece);
+            _oPool.Release(piece);
+            Debugger.Log("oPiece created");
+        }
+        return piece;
     }
 
     #region Public method - please don't overlook the summary :)
@@ -85,16 +105,16 @@ public class PiecePooler : MonoBehaviour
     #endregion
 
     #region Pool Events - being invoked when we get or return the objects (see InitPool for usage)
-    private void OnGetPiece(GameObject piece, bool shouldActivate, Transform newParent)
+    private void OnGetPiece(GameObject piece, bool shouldActivate)
     {
-        piece.transform.SetParent(newParent);
-        piece.transform.localPosition = Vector3.zero;
+        Debugger.Log($"Piece activated: {piece.name}, shouldActivate: {shouldActivate}");
+        piece.transform.SetParent(null);
         piece.SetActive(shouldActivate);
     }
     private void OnReturnPiece(GameObject piece)
     {
         piece.SetActive(false); // Deactivate the piece
-        piece.transform.SetParent(this.transform); // Set the parent to the PiecePooler object
+        piece.transform.SetParent(transform); // Set the parent to the PiecePooler object
         piece.transform.localPosition = Vector3.zero; // Reset position
     }
     #endregion

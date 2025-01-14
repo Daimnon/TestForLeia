@@ -14,6 +14,7 @@ public class XOBot : MonoBehaviour
         foreach (Vector2Int move in gameState.GetAvailableMoves())
         {
             gameState.MakeMove(move);
+            Debug.Log($"Made move: {move}. Recursively calling Minimax.");
             int score = Minimax(gameState, depth + 1, !isMaximizingPlayer);
             gameState.UndoMove(move);
 

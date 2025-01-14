@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
 using System.Collections;
+using ETouch = UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 public enum TileType
 {
@@ -12,6 +13,9 @@ public enum TileType
 
 public class GameManager : MonoBehaviour
 {
+    private ETouch.Finger _moveFinger;
+    private Vector3 _fingerMoveAmount;
+
     private const int BOARD_AXIS_LENGTH = 3;
     /*private const string X_PIECE_TAG = "xPiece";
     private const string O_PIECE_TAG = "oPiece";*/
@@ -31,6 +35,16 @@ public class GameManager : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private bool _isDebugEnabled = true;
 
+    private void OnEnable()
+    {
+        ETouch.EnhancedTouchSupport.Enable();
+        ETouch.Touch.onFingerDown += OnFingerDown;
+    }
+    private void OnDisable()
+    {
+        ETouch.Touch.onFingerDown -= OnFingerDown;
+        ETouch.EnhancedTouchSupport.Disable();
+    }
     private void Start()
     {
         Debugger.IsDebugEnabled = _isDebugEnabled; 
@@ -49,21 +63,11 @@ public class GameManager : MonoBehaviour
 
         SetupNewHuman();
         UpdateBoardVisuals();
-        StartCoroutine(HumanInputsRoutine());
     }
     private void SetupNewHuman()
     {
         _currentPlayer = Random.value > 0.5f ? TileType.X : TileType.O;
         _playerSymbol = _currentPlayer;
-    }
-    private IEnumerator HumanInputsRoutine()
-    {
-        while (!HandlePlayerInput())
-        {
-            yield return null;
-        }
-
-        StartCoroutine(BotTurnRoutine(_botMoveDelay));
     }
 
     private IEnumerator BotTurnRoutine(float delay)
@@ -89,7 +93,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private bool HandlePlayerInput() // need to change to Enhanced Touch
+    /*private bool HandlePlayerInput() // need to change to Enhanced Touch
     {
         if (_isInputBlocked) return false;
 
@@ -111,7 +115,7 @@ public class GameManager : MonoBehaviour
             }
         }
         return false;
-    }
+    }*/
     private void MakeBotMove()
     {
         _isInputBlocked = false;
@@ -240,5 +244,24 @@ public class GameManager : MonoBehaviour
 
         // If the game is a tie (no one is leading), return 0
         return 0;
+    }
+
+    private void OnFingerDown(Finger finger)
+    {
+        if (_isInputBlocked && _currentPlayer != _playerSymbol) return;
+        Debugger.Log("Input recieved");
+
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float maxRayDistance = 100f;
+        int layerMask = LayerMask.GetMask("Tiles");
+        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero, maxRayDistance, layerMask);
+
+        if (hit.collider != null && hit.collider.CompareTag(EMPTY_TILE_TAG))
+        {
+            Vector2Int movePos = new((int)hit.transform.position.x, (int)hit.transform.position.y);
+            MakeMove(movePos);
+            _isInputBlocked = true;
+            StartCoroutine(BotTurnRoutine(_botMoveDelay));
+        }
     }
 }
