@@ -50,6 +50,7 @@ public class BallPooler : MonoBehaviour
             for (int i = 0; i < _defaultCapacity; i++)
             {
                 Ball newBall = Instantiate(prefab);
+                newBall.BallPooler = this;
                 newBall.gameObject.SetActive(false); // Deactivate initially
                 pool.Add(newBall);
                 Debugger.Log($"Created {type}.");
