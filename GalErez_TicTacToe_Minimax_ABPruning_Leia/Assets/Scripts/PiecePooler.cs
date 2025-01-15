@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PiecePooler : MonoBehaviour
 {
-    [Header("Prefabs")]
+    /*[Header("Prefabs")]
     [SerializeField] private GameObject _xPrefab;
     [SerializeField] private GameObject _oPrefab;
 
@@ -79,5 +79,5 @@ public class PiecePooler : MonoBehaviour
         piece.transform.SetLocalPositionAndRotation(Vector2.zero, Quaternion.identity);
         pool.Add(piece);
     }
-    #endregion
+    #endregion*/
 }
