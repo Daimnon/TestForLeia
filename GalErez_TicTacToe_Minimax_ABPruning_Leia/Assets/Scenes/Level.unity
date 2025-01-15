@@ -279,6 +279,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -404,6 +405,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e0f7761730e4044d8248917cf3e4edb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  turn: 1
+  player1AI: 0
+  player2AI: 1
+  timeBetweenAIMove: 0
+  aiLevel: 0
+  aiDepth: 0000000000000000000000000000000000000000000000000000000000000000
+  spaces: 
+  tileTransforms:
+  - {fileID: 2136338154}
+  - {fileID: 133358452}
+  - {fileID: 2061779072}
+  - {fileID: 1299621182}
+  - {fileID: 1906269182}
+  - {fileID: 701915965}
+  - {fileID: 574866125}
+  - {fileID: 74161990}
+  - {fileID: 876367155}
+  piecePooler: {fileID: 141434989457594870}
 --- !u!4 &574866125 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4979295079180075479, guid: e9e4f5949bc0016439fb5918dfbe2828, type: 3}
@@ -524,7 +555,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1561278428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -950,7 +981,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1828750916714527297, guid: 4302c19659b9e374abb82e6e4118ac25, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1828750916714527297, guid: 4302c19659b9e374abb82e6e4118ac25, type: 3}
       propertyPath: m_StaticEditorFlags

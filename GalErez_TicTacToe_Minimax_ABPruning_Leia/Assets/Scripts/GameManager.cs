@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using ETouch = UnityEngine.InputSystem.EnhancedTouch;
-using UnityEngine.InputSystem.EnhancedTouch;
 
 public enum TileType
 {
@@ -145,7 +144,7 @@ public class GameManager : MonoBehaviour
 
     private bool CheckWin(TileType player)
     {
-        for (int i = 0; i < _board.GetLength(0); i++)
+        for (int i = 0; i < BOARD_AXIS_LENGTH ; i++)
         {
             if (_board[i, 0] == player && _board[i, 1] == player && _board[i, 2] == player) return true; // row
             if (_board[0, i] == player && _board[1, i] == player && _board[2, i] == player) return true; // column
@@ -169,6 +168,53 @@ public class GameManager : MonoBehaviour
         }
         return true; // If no empty spots are found, the board is full
     }
+    /// <summary>
+    /// Evaluates the current state of the board and returns a score.
+    /// </summary>
+    /// <returns>10 if X is winning, -10 if O is winning, 0 if no winner</returns>
+    private int EvaluateBoard()
+    {
+        // Check rows for victory
+        for (int row = 0; row < BOARD_AXIS_LENGTH; row++)
+        {
+            if (_board[row, 0] != TileType.Empty &&
+                _board[row, 0] == _board[row, 1] &&
+                _board[row, 1] == _board[row, 2])
+            {
+                return _board[row, 0] == TileType.X ? 1 : -1;
+            }
+        }
+
+        // Check columns for victory
+        for (int col = 0; col < BOARD_AXIS_LENGTH; col++)
+        {
+            if (_board[0, col] != TileType.Empty &&
+                _board[0, col] == _board[1, col] &&
+                _board[1, col] == _board[2, col])
+            {
+                return _board[0, col] == TileType.X ? 1 : -1;
+            }
+        }
+
+        // Check diagonals for victory
+        if (_board[0, 0] != TileType.Empty &&
+            _board[0, 0] == _board[1, 1] &&
+            _board[1, 1] == _board[2, 2])
+        {
+            return _board[0, 0] == TileType.X ? 1 : -1;
+        }
+
+        if (_board[0, 2] != TileType.Empty &&
+            _board[0, 2] == _board[1, 1] &&
+            _board[1, 1] == _board[2, 0])
+        {
+            return _board[0, 2] == TileType.X ? 1 : -1;
+        }
+
+        // No winner
+        return 0;
+    }
+
     private int EvaluatePerPiece()
     {
         int xScore = 0;
@@ -282,22 +328,15 @@ public class GameManager : MonoBehaviour
     /// <returns>1 if 'X' is leading || -1 if 'O' is leading || 0 if no leader</returns>
     public int GetStateScore()
     {
-        // If there's a winner, return the corresponding score based on who is leading
-        int boardScore = EvaluatePerPiece();
-
-        if (boardScore == 1) return 1;  // X is leading
-        if (boardScore == -1) return -1; // O is leading
-
-        // If the game is a tie (no one is leading), return 0
-        return 0;
+        return EvaluateBoard();
     }
 
-    private void OnFingerDown(Finger finger)
+    private void OnFingerDown(ETouch.Finger finger)
     {
         if (_isInputBlocked && _currentPlayer != _playerSymbol) return;
         Debugger.Log("Input recieved");
 
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(finger.screenPosition);
         float maxRayDistance = 100f;
         int layerMask = LayerMask.GetMask("Tiles");
         RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero, maxRayDistance, layerMask);
