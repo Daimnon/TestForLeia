@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -27,6 +28,10 @@ public class BallDropper : MonoBehaviour
     private Ball _currentBall = null;
     private Ball _nextBall = null;
 
+    [Header("Seed")]
+    [SerializeField] private string _seed;
+    private List<BallType> _ballTypes;
+
     private Coroutine _prepareToThrow;
     private bool _isThrowable = true;
 
@@ -45,16 +50,41 @@ public class BallDropper : MonoBehaviour
         ETouch.Touch.onFingerUp -= OnFingerUp;
         ETouch.EnhancedTouchSupport.Disable();
     }
+    private void Awake()
+    {
+        _seed = "MyUniqueSeed";
+        InitRandomizer(_seed);
+    }
     private void Start()
     {
         InitDropper();
     }
 
+    private void InitRandomizer(string seed)
+    {
+        int seedValue = seed.GetHashCode();
+        UnityEngine.Random.InitState(seedValue);
+
+        _ballTypes = new List<BallType>(5)
+        {
+            BallType.Rock,
+            BallType.Star,
+            BallType.Fire,
+            BallType.Food,
+            BallType.Plant
+        };
+    }
+    private Ball GetNextBall(Transform newParent)
+    {
+        int index = UnityEngine.Random.Range(0, _ballTypes.Count);
+        return _ballPooler.GetFromPool(_ballTypes[index], newParent, true);
+    }
+
     private void InitDropper() // setuping the balls and making sure they won't fall (upwards) or collide
     {
-        _currentBall = _ballPooler.GetFromPool(BallType.Fire, _currentBallTr, true);
+        _currentBall = GetNextBall(_currentBallTr);
         _currentBall.RB2D.simulated = false;
-        _nextBall = _ballPooler.GetFromPool(BallType.Fire, _nextBallTr, true);
+        _nextBall = GetNextBall(_nextBallTr);
         _nextBall.RB2D.simulated = false;
     }
 
@@ -84,7 +114,7 @@ public class BallDropper : MonoBehaviour
         _currentBall.transform.SetParent(_currentBallTr);
         _currentBall.transform.localPosition = Vector2.zero;
 
-        _nextBall = _ballPooler.GetFromPool(BallType.Fire, _nextBallTr, true);
+        _nextBall = GetNextBall(_nextBallTr);
         _nextBall.RB2D.simulated = false;
 
         yield return new WaitForSeconds(_delayBetweenThrows);

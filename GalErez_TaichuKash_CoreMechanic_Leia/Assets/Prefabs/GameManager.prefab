@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7232795522831718221}
   - component: {fileID: 5456230392115873916}
+  - component: {fileID: 8858373479916062910}
+  - component: {fileID: 6713459082089762343}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -44,5 +46,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1355bfc6a73980c4eae5d32a38d87938, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _ballPooler: {fileID: 0}
   _levelTime: 300
-  _timerText: {fileID: 0}
+  _levelTimerText: {fileID: 0}
+  _comboTime: 0.4
+  _comboTimer: 0
+  _deathTime: 1.2
+  _deathTimer: 0
+  _gameOverCanvas: {fileID: 0}
+--- !u!114 &8858373479916062910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7510750191803547944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67ccd4e9797d90743b9adbcc83b7b056, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scoreTextTMP: {fileID: 0}
+--- !u!114 &6713459082089762343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7510750191803547944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc98c332ef4f2174d9ec53bcb9aeda18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

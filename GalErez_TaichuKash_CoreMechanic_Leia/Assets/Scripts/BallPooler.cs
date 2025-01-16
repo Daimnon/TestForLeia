@@ -31,14 +31,6 @@ public class BallPooler : MonoBehaviour
     {
         InitPools();
     }
-    private void OnEnable()
-    {
-        EventSystem.OnMergeBalls += OnMergeBalls;
-    }
-    private void OnDisable()
-    {
-        EventSystem.OnMergeBalls -= OnMergeBalls;
-    }
 
     private void InitPools() // lot's of debugs because we can't see dictionary in inspector by default
     {
@@ -148,16 +140,5 @@ public class BallPooler : MonoBehaviour
         {
             Debugger.Log($"No pool found for BallType {ball.BallType}");
         }
-    }
-
-    private void OnMergeBalls(BallType ballType, Ball ball, Ball otherBall)
-    {
-        Debugger.Log("Merged by pool");
-        int newBallTypeValue = (int)ballType + 1;
-        ReturnToPool(otherBall);
-        Ball newBall = GetFromPool((BallType)newBallTypeValue, null, true);
-        newBall.transform.position = ball.transform.position;
-        ReturnToPool(ball);
-        EventSystem.InvokeScore((BallType)newBallTypeValue); // apply score of new ball
     }
 }

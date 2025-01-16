@@ -1,9 +1,17 @@
 using UnityEngine;
 using System;
-using UnityEditorInternal;
 
 public static class EventSystem
 {
+    #region GameLoop
+    public static Action<bool> OnPause;
+    public static void InvokeCombo(bool isPaused)
+    {
+        Debugger.Log($"Invoke: Pause.");
+        OnPause?.Invoke(isPaused);
+    }
+    #endregion
+
     #region MergeBalls
     public static Action<BallType, Ball, Ball> OnMergeBalls;
     public static void InvokeMergeBalls(BallType ballType, Ball ball, Ball otherBall)
@@ -19,6 +27,30 @@ public static class EventSystem
     {
         Debugger.Log($"Invoke: Score {ballType}.");
         OnScore?.Invoke(ballType);
+    }
+    #endregion
+
+    #region Combos
+    public static Action OnCombo;
+    public static void InvokeCombo()
+    {
+        Debugger.Log($"Invoke: Combo.");
+        OnCombo?.Invoke();
+    }
+    #endregion
+
+    #region Death
+    public static Action OnTriggeredEnterDeathTimerStart; 
+    public static Action OnTriggeredExitDeathTimerStop;
+    public static void InvokeTriggeredEnterDeathTimerStart()
+    {
+        Debugger.Log($"Invoke: TriggeredEnterDeathTimerStart.");
+        OnTriggeredEnterDeathTimerStart?.Invoke();
+    }
+    public static void InvokeTriggeredExitDeathTimerStop()
+    {
+        Debugger.Log($"Invoke: TriggeredExitDeathTimerStop.");
+        OnTriggeredExitDeathTimerStop?.Invoke();
     }
     #endregion
 }
