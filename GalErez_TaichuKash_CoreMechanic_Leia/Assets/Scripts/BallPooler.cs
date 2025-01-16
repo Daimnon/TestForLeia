@@ -158,5 +158,6 @@ public class BallPooler : MonoBehaviour
         Ball newBall = GetFromPool((BallType)newBallTypeValue, null, true);
         newBall.transform.position = ball.transform.position;
         ReturnToPool(ball);
+        EventSystem.InvokeScore((BallType)newBallTypeValue); // apply score of new ball
     }
 }
