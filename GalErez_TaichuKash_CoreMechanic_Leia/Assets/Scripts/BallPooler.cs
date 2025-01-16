@@ -22,7 +22,8 @@ public class BallPooler : MonoBehaviour
     [SerializeField] private Ball[] _prefabs;
 
     [Header("Configuration for each pool")]
-    [SerializeField] private int _defaultCapacity = 20;
+    [SerializeField] private int _defaultCapacity = 20; // also used as expanding amount
+    [SerializeField] private bool _isExpandable = true;
 
     private Dictionary<BallType, List<Ball>> _ballPools;
 
@@ -31,7 +32,7 @@ public class BallPooler : MonoBehaviour
         InitPools();
     }
 
-    private void InitPools() // lot's of debugs cause can see dictionary in inspector by default
+    private void InitPools() // lot's of debugs because we can't see dictionary in inspector by default
     {
         _ballPools = new Dictionary<BallType, List<Ball>>();
 
@@ -60,13 +61,37 @@ public class BallPooler : MonoBehaviour
         }
     }
 
+    private void CreateExtraBalls(BallType type)
+    {
+        Debugger.Log($"Creating pool for {type}.");
+
+        Ball prefab = _prefabs[(int)type];
+        if (prefab == null)
+        {
+            Debugger.Log($"Prefab for {type} is missing.");
+            return;
+        }
+
+        List<Ball> pool = new(_defaultCapacity);
+        for (int i = 0; i < _defaultCapacity; i++)
+        {
+            Ball newBall = Instantiate(prefab);
+            newBall.BallPooler = this;
+            newBall.gameObject.SetActive(false); // Deactivate initially
+            pool.Add(newBall);
+            Debugger.Log($"Created {type}.");
+        }
+
+        _ballPools[type].AddRange(pool);
+    }
+
     /// <summary>
-    /// Automatically sets the ball's position according to the parent.
+    /// Automatically sets the ball's position according to the parent. If there are no more balls in pool and _isExpandable is true than more balls will be created.
     /// </summary>
     /// <returns>Ball from pool</returns>
     public Ball GetFromPool(BallType type, Transform newParent, bool isActive)
     {
-        if (_ballPools.TryGetValue(type, out var pool) && pool.Count > 0)
+        if (_ballPools.TryGetValue(type, out List<Ball> pool) && pool.Count > 0)
         {
             Ball ball = pool[0];
             ball.transform.SetParent(newParent);
@@ -76,7 +101,20 @@ public class BallPooler : MonoBehaviour
             return ball;
         }
 
-        Debug.LogWarning($"No ball available in the pool for BallType {type}");
+        Debugger.Log($"No ball available in the pool for BallType {type}");
+        if (_isExpandable)
+        {
+            CreateExtraBalls(type);
+            if (_ballPools.TryGetValue(type, out List<Ball> expandedPool) && expandedPool.Count > 0)
+            {
+                Ball ball = expandedPool[0];
+                ball.transform.SetParent(newParent);
+                ball.transform.localPosition = Vector2.zero;
+                ball.gameObject.SetActive(isActive);
+                expandedPool.RemoveAt(0);
+                return ball;
+            }
+        }
         return null;
     }
 
@@ -94,9 +132,7 @@ public class BallPooler : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"No pool found for BallType {ball.BallType}");
+            Debugger.Log($"No pool found for BallType {ball.BallType}");
         }
     }
-
-    
 }
