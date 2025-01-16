@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     [Header("Game Timer")]
     [SerializeField] private float _levelTime = 300.0f;
     [SerializeField] private TextMeshProUGUI _levelTimerText;
+    private float _timeRemaining;
 
     [Header("Combo")]
     [SerializeField] private float _comboTime = 0.6f;
@@ -28,7 +29,8 @@ public class GameManager : MonoBehaviour
     [Header("Game Over")]
     [SerializeField] private GameObject _gameOverCanvas;
 
-    private float _timeRemaining;
+    private bool _isPaused = false;
+
     private void Awake()
     {
         _timeRemaining = _levelTime;
@@ -53,7 +55,7 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
-        if (_timeRemaining > 0)
+        if (!_isPaused && _timeRemaining > 0)
         {
             DecreaseTime();
         }
@@ -73,6 +75,7 @@ public class GameManager : MonoBehaviour
 
         if (_timeRemaining <= 0)
         {
+            ResetDeathTimer();
             GameOver();
         }
     }
@@ -105,6 +108,12 @@ public class GameManager : MonoBehaviour
     {
         _gameOverCanvas.SetActive(true);
     }
+    private void ResetDeathTimer()
+    {
+        _deathTimer = _deathTime;
+        _isDeathTimerActive = false;
+        _deathTimerHandler = null;
+    }
 
     #region Events
     private void OnMergeBalls(BallType ballType, Ball ball, Ball otherBall) // wanted maybe to split it into two events but I think I won't
@@ -134,13 +143,12 @@ public class GameManager : MonoBehaviour
         if (_deathTimerHandler != null)
         {
             StopCoroutine(_deathTimerHandler);
-            _deathTimer = _deathTime;
-            _isDeathTimerActive = false;
-            _deathTimerHandler = null;
+            ResetDeathTimer();
         }
     }
-    private void OnPause(bool obj)
+    private void OnPause(bool isPaused)
     {
+        _isPaused = isPaused;
     }
     #endregion
 }
