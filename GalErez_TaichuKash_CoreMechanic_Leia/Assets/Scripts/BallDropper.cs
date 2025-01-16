@@ -4,13 +4,14 @@ using TMPro;
 using UnityEngine;
 using ETouch = UnityEngine.InputSystem.EnhancedTouch;
 
-public class BallSpawner : MonoBehaviour
+public class BallDropper : MonoBehaviour
 {
     [Header("Components")]
     [SerializeField] private BallPooler _ballPooler;
     [SerializeField] private LineRenderer _lineRenderer;
 
     [Header("Locations")]
+    [SerializeField] private Transform _ceilingTr;
     [SerializeField] private Transform _spawnerSpriteTr;
     [SerializeField] private Transform _currentBallTr;
     [SerializeField] private Transform _nextBallTr;
@@ -18,6 +19,10 @@ public class BallSpawner : MonoBehaviour
     [SerializeField] private float _throwForce;
     [SerializeField] private float _delayBetweenThrows = 0.8f;
     [SerializeField] private float _throwPreparationTime = 0.4f;
+
+    [Header("Drop Range Constraints")]
+    [SerializeField] private float _xConstraintNegative = -5f;
+    [SerializeField] private float _xConstraintPositive = 5f;
 
     private Ball _currentBall = null;
     private Ball _nextBall = null;
@@ -42,15 +47,23 @@ public class BallSpawner : MonoBehaviour
 
     private void Start()
     {
-        InitSpawner();
+        InitDropper();
     }
 
-    private void InitSpawner()
+    private void InitDropper()
     {
         _currentBall = _ballPooler.GetFromPool(BallType.Fire, _currentBallTr, true);
         _currentBall.RB2D.simulated = false;
         _nextBall = _ballPooler.GetFromPool(BallType.Fire, _nextBallTr, true);
         _nextBall.RB2D.simulated = false;
+    }
+
+    private void UpdateLineRenderer(Transform tr)
+    {
+        _lineRenderer.SetPosition(0, tr.position);
+        Vector3 endLinePos = tr.position;
+        endLinePos.y = _ceilingTr.localPosition.y - _ceilingTr.localScale.y /2;
+        _lineRenderer.SetPosition(1, endLinePos);
     }
     private IEnumerator PrepareToThrowRoutine(float duration)
     {
@@ -81,23 +94,30 @@ public class BallSpawner : MonoBehaviour
         _isThrowable = true;
     }
 
-
     private void OnFingerDown(ETouch.Finger finger)
     {
         Vector2 fingerWorldPos = Camera.main.ScreenToWorldPoint(finger.screenPosition);
+        if (fingerWorldPos.x < _xConstraintNegative || fingerWorldPos.x > _xConstraintPositive) return;
+
         transform.position = fingerWorldPos;
         _prepareToThrow = StartCoroutine(PrepareToThrowRoutine(0.4f));
+        _lineRenderer.enabled = true;
+        UpdateLineRenderer(transform);
     }
     private void OnFingerMove(ETouch.Finger finger)
     {
         Vector2 fingerWorldPos = Camera.main.ScreenToWorldPoint(finger.screenPosition);
+        if (fingerWorldPos.x < _xConstraintNegative || fingerWorldPos.x > _xConstraintPositive) return;
+
         transform.position = fingerWorldPos;
+        UpdateLineRenderer(transform);
     }
     private void OnFingerUp(ETouch.Finger finger)
     {
         if (!_isThrowable) return;
         if (_prepareToThrow != null) StopCoroutine(_prepareToThrow);
 
+        _lineRenderer.enabled = false;
         // throw current ball
         _currentBall.RB2D.simulated = true;
         _currentBall.transform.SetParent(null);
@@ -105,6 +125,6 @@ public class BallSpawner : MonoBehaviour
         _currentBall = null;
         _isThrowable = false;
 
-        StartCoroutine(ChangeBallsRoutine()); // not track cause no need for now
+        StartCoroutine(ChangeBallsRoutine()); // not tracked cause no need for now
     }
 }

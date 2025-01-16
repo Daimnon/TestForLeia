@@ -16,7 +16,8 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag(BALL_TAG) && GetInstanceID() < collision.gameObject.GetInstanceID())
+        // because the gameObjects are identical I can just make sure one of them is not trigger if I compare the instance ID
+        if (collision.gameObject.CompareTag(BALL_TAG) && GetInstanceID() < collision.gameObject.GetInstanceID()) 
         {
             Ball otherBall = collision.gameObject.GetComponent<Ball>();
             otherBall.enabled = false;
