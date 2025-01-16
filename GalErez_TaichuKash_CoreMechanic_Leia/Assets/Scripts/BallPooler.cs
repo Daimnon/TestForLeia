@@ -31,6 +31,14 @@ public class BallPooler : MonoBehaviour
     {
         InitPools();
     }
+    private void OnEnable()
+    {
+        EventSystem.OnMergeBalls += OnMergeBalls;
+    }
+    private void OnDisable()
+    {
+        EventSystem.OnMergeBalls -= OnMergeBalls;
+    }
 
     private void InitPools() // lot's of debugs because we can't see dictionary in inspector by default
     {
@@ -51,7 +59,7 @@ public class BallPooler : MonoBehaviour
             for (int i = 0; i < _defaultCapacity; i++)
             {
                 Ball newBall = Instantiate(prefab);
-                newBall.BallPooler = this;
+                //newBall.BallPooler = this;
                 newBall.gameObject.SetActive(false); // Deactivate initially
                 pool.Add(newBall);
                 Debugger.Log($"Created {type}.");
@@ -66,7 +74,7 @@ public class BallPooler : MonoBehaviour
         Debugger.Log($"Creating pool for {type}.");
 
         Ball prefab = _prefabs[(int)type];
-        if (prefab == null)
+        if (prefab == null) 
         {
             Debugger.Log($"Prefab for {type} is missing.");
             return;
@@ -76,7 +84,7 @@ public class BallPooler : MonoBehaviour
         for (int i = 0; i < _defaultCapacity; i++)
         {
             Ball newBall = Instantiate(prefab);
-            newBall.BallPooler = this;
+            //newBall.BallPooler = this;
             newBall.gameObject.SetActive(false); // Deactivate initially
             pool.Add(newBall);
             Debugger.Log($"Created {type}.");
@@ -91,6 +99,12 @@ public class BallPooler : MonoBehaviour
     /// <returns>Ball from pool</returns>
     public Ball GetFromPool(BallType type, Transform newParent, bool isActive)
     {
+        if ((int)type > _prefabs.Length - 1) // check if not trying to merge the last ball or somthing
+        {
+            Debugger.Log($"GetFromPool: Not a valid type.");
+            return null;
+        }
+
         if (_ballPools.TryGetValue(type, out List<Ball> pool) && pool.Count > 0)
         {
             Ball ball = pool[0];
@@ -134,5 +148,15 @@ public class BallPooler : MonoBehaviour
         {
             Debugger.Log($"No pool found for BallType {ball.BallType}");
         }
+    }
+
+    private void OnMergeBalls(BallType ballType, Ball ball, Ball otherBall)
+    {
+        Debugger.Log("Merged by pool");
+        int newBallTypeValue = (int)ballType + 1;
+        ReturnToPool(otherBall);
+        Ball newBall = GetFromPool((BallType)newBallTypeValue, null, true);
+        newBall.transform.position = ball.transform.position;
+        ReturnToPool(ball);
     }
 }

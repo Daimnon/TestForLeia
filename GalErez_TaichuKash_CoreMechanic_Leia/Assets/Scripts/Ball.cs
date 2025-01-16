@@ -4,7 +4,7 @@ public class Ball : MonoBehaviour
 {
     private const string BALL_TAG = "Ball";
 
-    public BallPooler @BallPooler { get; set; }
+    //public BallPooler @BallPooler { get; set; }
 
     [SerializeField] BallType _ballType;
     public BallType @BallType => _ballType;
@@ -16,16 +16,14 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag(BALL_TAG))
+        if (collision.gameObject.CompareTag(BALL_TAG) && GetInstanceID() < collision.gameObject.GetInstanceID())
         {
             Ball otherBall = collision.gameObject.GetComponent<Ball>();
-            if (otherBall.BallType == _ballType)
+            otherBall.enabled = false;
+
+            if (otherBall.BallType == _ballType && (int)otherBall.BallType < System.Enum.GetValues(typeof(BallType)).Length)
             {
-                /*int newBallTypeValue = (int)_ballType + 1;
-                this.BallPooler.ReturnToPool(otherBall);
-                Ball newBall = this.BallPooler.GetFromPool((BallType)newBallTypeValue, null, true);
-                newBall.transform.position = transform.position;
-                this.BallPooler.ReturnToPool(this);*/
+                EventSystem.InvokeMergeBalls(_ballType, this, otherBall);
             }
         }
     }
