@@ -19,15 +19,15 @@ public class ScoreManager : MonoBehaviour
     {
         EventSystem.OnScore -= OnScore;
     }
-
     private void Start()
     {
         _scoreByEnum = new int[System.Enum.GetValues(typeof(BallType)).Length];
         for (int i = 0; i < _scoreByEnum.Length; i++)
         {
-            _scoreByEnum[i] = i;
+            _scoreByEnum[i] = i*2; // quickly make an arbirtary score calculation based on the enums
         }
     }
+
     private void OnScore(BallType type)
     {
         Debugger.Log("Scored by pool");

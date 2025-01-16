@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _levelTime = 300.0f;
     [SerializeField] private TextMeshProUGUI _timerText;
 
+    [Header("Game Over")]
+    [SerializeField] private GameObject _gameOverCanvas;
+
     private float _timeRemaining;
     private void Awake()
     {
@@ -41,6 +44,6 @@ public class GameManager : MonoBehaviour
     }
     private void GameOver()
     {
-        // do pop up
+        _gameOverCanvas.SetActive(true);
     }
 }
