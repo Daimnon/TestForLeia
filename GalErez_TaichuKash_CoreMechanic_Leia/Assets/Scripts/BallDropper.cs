@@ -30,6 +30,7 @@ public class BallDropper : MonoBehaviour
     private Coroutine _prepareToThrow;
     private bool _isThrowable = true;
 
+    // apply Enhanced Touch
     private void OnEnable()
     {
         ETouch.EnhancedTouchSupport.Enable();
@@ -44,13 +45,12 @@ public class BallDropper : MonoBehaviour
         ETouch.Touch.onFingerUp -= OnFingerUp;
         ETouch.EnhancedTouchSupport.Disable();
     }
-
     private void Start()
     {
         InitDropper();
     }
 
-    private void InitDropper()
+    private void InitDropper() // setuping the balls and making sure they won't fall (upwards) or collide
     {
         _currentBall = _ballPooler.GetFromPool(BallType.Fire, _currentBallTr, true);
         _currentBall.RB2D.simulated = false;
@@ -62,7 +62,7 @@ public class BallDropper : MonoBehaviour
     {
         _lineRenderer.SetPosition(0, tr.position);
         Vector3 endLinePos = tr.position;
-        endLinePos.y = _ceilingTr.localPosition.y - _ceilingTr.localScale.y /2;
+        endLinePos.y = _ceilingTr.localPosition.y - _ceilingTr.localScale.y /2; // so it will always reach the bottom edge of the gameObject
         _lineRenderer.SetPosition(1, endLinePos);
     }
     private IEnumerator PrepareToThrowRoutine(float duration)
@@ -77,16 +77,13 @@ public class BallDropper : MonoBehaviour
             yield return null;
         }
         ball.transform.position = _spawnerSpriteTr.position;
-
     }
     private IEnumerator ChangeBallsRoutine()
     {
-        // change balls
         _currentBall = _nextBall;
         _currentBall.transform.SetParent(_currentBallTr);
         _currentBall.transform.localPosition = Vector2.zero;
 
-        // get new nextBall
         _nextBall = _ballPooler.GetFromPool(BallType.Fire, _nextBallTr, true);
         _nextBall.RB2D.simulated = false;
 
@@ -100,7 +97,7 @@ public class BallDropper : MonoBehaviour
         if (fingerWorldPos.x < _xConstraintNegative || fingerWorldPos.x > _xConstraintPositive) return;
 
         transform.position = fingerWorldPos;
-        _prepareToThrow = StartCoroutine(PrepareToThrowRoutine(0.4f));
+        _prepareToThrow = StartCoroutine(PrepareToThrowRoutine(_throwPreparationTime));
         _lineRenderer.enabled = true;
         UpdateLineRenderer(transform);
     }
