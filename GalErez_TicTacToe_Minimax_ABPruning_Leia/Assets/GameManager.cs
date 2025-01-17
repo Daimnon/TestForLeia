@@ -11,9 +11,9 @@ public enum Difficulity
     Hard
 }
 
-public class TicTacToeManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    private int[] spaces;
+    private int[] _tileIDs; // generated on start
 
     [Header("Configuration")]
     [SerializeField] private int _turn = 1; // turn = 1 implies player 1 turn, same for player 2 aka the bot
@@ -27,103 +27,83 @@ public class TicTacToeManager : MonoBehaviour
     [SerializeField] private string[] _shapes; // first shape should be empty
 
     [Header("Game State UI")]
-    [SerializeField] TextMeshProUGUI gameStateText;
-    [SerializeField] GameObject playAgainButton;
+    [SerializeField] private TextMeshProUGUI _turnTextTMP;
+    [SerializeField] private GameObject _againBtn;
 
-    void Start()
+    private void Start()
     {
-        ResetGameState();
+        ResetGame();
     }
 
-    void ResetGameState()
+    private void ResetGame()
     {
-        spaces = new int[9];
-
+        _tileIDs = new int[9];
         _turn = 1;
 
         UpdateUI();
-
-        playAgainButton.SetActive(false);
-
-        StartCoroutine(AIMove());
+        _againBtn.SetActive(false);
+        StartCoroutine(BotMove());
     }
-
-    void UpdateUI()
+    private void UpdateUI()
     {
-        for (int i = 0; i < spaces.Length; i++)
+        for (int i = 0; i < _tileIDs.Length; i++)
         {
-            _tileTexts[i].text = _shapes[spaces[i]];
+            _tileTexts[i].text = _shapes[_tileIDs[i]];
         }
 
-        gameStateText.text = "Player " + _turn + "'s Turn";
+        _turnTextTMP.text = _turn == 1 ? "Player's Turn" : "Bot Turn";
     }
 
-    public void SpaceClicked(int spaceClicked)
-    {
-        if (_turn != -1 && _turn == 1) // making sure it's the player's turn
-            if (spaces[spaceClicked] == 0)
-                MakeMove(spaceClicked);
-    }
-
-    IEnumerator AIMove()
+    private IEnumerator BotMove()
     {
         yield return new WaitForSeconds(_botMoveDelay);
 
         if (_turn == 2)
         {
             int depth = _botForeSightDepth[(int)_botLevel];
-            minimax(spaces, depth, true, depth);
+            Minimax(_tileIDs, depth, true, depth);
         }
     }
 
-    int minimax(int[] currentSpaces, int depth, bool maximizingPlayer, int initialDepth)
+    private int Minimax(int[] currentBoard, int depth, bool isMaxSide, int initialDepth)
     {
-        int gameOver = CheckWin(currentSpaces);
+        int gameOver = CheckVictory(currentBoard);
         if (depth == 0 || gameOver != -1)
         {
-            if (gameOver == _turn)
-            {
-                return 1;
-            }
-            else if (gameOver != _turn && gameOver > 0)
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
+            if (gameOver == _turn) return 1;
+            else if (gameOver != _turn && gameOver > 0) return -1;
+            else return 0;
         }
 
-        if (maximizingPlayer)
+        if (isMaxSide)
         {
-            int maxEval = -10000;
-            List<int> possibleMoves = GetPossibleMoves(currentSpaces);
+            int maxEvaluation = -10000;
+            List<int> possibleMoves = GetPossibleMoves(currentBoard);
 
             List<int> bestMove = new List<int>();
             for (int i = 0; i < possibleMoves.Count; i++)
             {
-                int[] newSpaces = new int[9];
-                for (int space = 0; space < 9; space++)
+                int[] tempBoard = new int[9];
+                for (int j = 0; j < 9; j++) // j == tileID
                 {
-                    newSpaces[space] = currentSpaces[space];
+                    tempBoard[j] = currentBoard[j];
                 }
-                newSpaces[possibleMoves[i]] = _turn;
+                tempBoard[possibleMoves[i]] = _turn;
 
-                int eval = minimax(newSpaces, depth - 1, false, initialDepth);
+                int evaluation = Minimax(tempBoard, depth - 1, false, initialDepth);
                 if (initialDepth == depth)
                 {
-                    if (eval > maxEval)
+                    if (evaluation > maxEvaluation)
                     {
                         bestMove.Clear();
                         bestMove.Add(i);
                     }
-                    else if (eval == maxEval)
+                    else if (evaluation == maxEvaluation)
                     {
                         bestMove.Add(i);
                     }
                 }
-                maxEval = Mathf.Max(maxEval, eval);
+                maxEvaluation = Mathf.Max(maxEvaluation, evaluation);
             }
 
             if (initialDepth == depth)
@@ -132,42 +112,42 @@ public class TicTacToeManager : MonoBehaviour
                 MakeMove(possibleMoves[moveChosen]);
             }
 
-            return maxEval;
+            return maxEvaluation;
         }
         else
         {
-            int minEval = 10000;
-            List<int> possibleMoves = GetPossibleMoves(currentSpaces);
+            int minEvaluation = 10000;
+            List<int> possibleMoves = GetPossibleMoves(currentBoard);
 
             for (int i = 0; i < possibleMoves.Count; i++)
             {
-                int[] newSpaces = new int[9];
-                for (int space = 0; space < 9; space++)
+                int[] tempBoard = new int[9];
+                for (int j = 0; j < 9; j++) // j == tileID
                 {
-                    newSpaces[space] = currentSpaces[space];
+                    tempBoard[j] = currentBoard[j];
                 }
-                newSpaces[possibleMoves[i]] = _turn == 1 ? 2 : 1;
+                tempBoard[possibleMoves[i]] = _turn == 1 ? 2 : 1;
 
-                int eval = minimax(newSpaces, depth - 1, true, initialDepth);
-                minEval = Mathf.Min(minEval, eval);
+                int evaluation = Minimax(tempBoard, depth - 1, true, initialDepth);
+                minEvaluation = Mathf.Min(minEvaluation, evaluation);
             }
 
-            return minEval;
+            return minEvaluation;
         }
     }
 
-    void MakeMove(int spaceToMove)
+    private void MakeMove(int spaceToMove)
     {
-        spaces[spaceToMove] = _turn;
+        _tileIDs[spaceToMove] = _turn;
         _turn = _turn == 1 ? 2 : 1;
         UpdateUI();
 
         CheckEndGame();
 
-        StartCoroutine(AIMove());
+        StartCoroutine(BotMove());
     }
 
-    List<int> GetPossibleMoves(int[] spacesToCheck)
+    private List<int> GetPossibleMoves(int[] spacesToCheck)
     {
         List<int> possibleMoves = new List<int>();
         for (int i = 0; i < spacesToCheck.Length; i++)
@@ -179,44 +159,38 @@ public class TicTacToeManager : MonoBehaviour
         return possibleMoves;
     }
 
-    void CheckEndGame()
+    private void CheckEndGame()
     {
-        int win = CheckWin(spaces);
+        int winner = CheckVictory(_tileIDs);
 
-        if (win == 0)
-            Tie();
-        else if (win == 1)
-            Player1Wins();
-        else if (win == 2)
-            Player2Wins();
-
-        if (win != -1)
-            EndGame();
+        if (winner == 0) Tie();
+        else if (winner == 1) PlayerVictory();
+        else if (winner == 2) BotVictory();
+        if (winner != -1) EndGame();
     }
 
-    void Player1Wins()
+    #region Victory methods
+    private void PlayerVictory()
     {
-        gameStateText.text = "Player 1 Wins!";
+        _turnTextTMP.text = "Player's Victory!";
     }
-
-    void Player2Wins()
+    private void BotVictory()
     {
-        gameStateText.text = "Player 2 Wins!";
+        _turnTextTMP.text = "Bot's Victory!";
     }
-
-    void Tie()
+    private void Tie()
     {
-        gameStateText.text = "Tie!";
+        _turnTextTMP.text = "It's a tie!";
     }
+    #endregion
 
-    void EndGame()
+    private void EndGame()
     {
         _turn = -1;
-
-        playAgainButton.SetActive(true);
+        _againBtn.SetActive(true);
     }
 
-    int CheckWin(int[] spacesToCheck)
+    private int CheckVictory(int[] spacesToCheck)
     {
         List<int> spaceNum = new List<int>();
 
@@ -277,7 +251,7 @@ public class TicTacToeManager : MonoBehaviour
         else
         {
             int freeSpaces = 0;
-            for (int i = 0; i < spaces.Length; i++)
+            for (int i = 0; i < _tileIDs.Length; i++)
             {
                 if (spacesToCheck[i] == 0)
                     freeSpaces++;
@@ -292,8 +266,14 @@ public class TicTacToeManager : MonoBehaviour
         return -1;
     }
 
+    public void ChooseTile(int tileID)
+    {
+        if (_turn != -1 && _turn == 1) // making sure it's the player's turn
+            if (_tileIDs[tileID] == 0)
+                MakeMove(tileID);
+    }
     public void PlayAgain()
     {
-        ResetGameState();
+        ResetGame();
     }
 }
