@@ -3,25 +3,28 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public enum Difficulity
+{ 
+    VeryEasy, 
+    Easy, 
+    Medium, 
+    Hard
+}
+
 public class TicTacToeManager : MonoBehaviour
 {
+    private int[] spaces;
+
     [Header("Configuration")]
-    [SerializeField] int turn = 1; // turn = 1 implies player 1 turn, same for player 2
-    [SerializeField] bool player2AI = false;
-    [SerializeField] float timeBetweenAIMove;
+    [SerializeField] private int _turn = 1; // turn = 1 implies player 1 turn, same for player 2 aka the bot
+    [SerializeField] private float _botMoveDelay = 0.4f;
 
-    public enum AILevel { VeryEasy, Easy, Medium, Impossible }
+    [SerializeField] private Difficulity _botLevel = Difficulity.Hard;
+    [SerializeField] private int[] _botForeSightDepth = new int[4] { 1, 2, 4, 9 };
 
-    [SerializeField] AILevel aiLevel;
-    [SerializeField] int[] aiDepth;
-
-    [Header("Space Info")]
-    [SerializeField] int[] spaces;
-
-    [Header("Space Display")]
-    [SerializeField] TextMeshProUGUI[] spaceText;
-    [SerializeField] string[] spaceDisplayText;
-    [SerializeField] Color[] spaceDisplayColor;
+    [Header("Tiles")]
+    [SerializeField] private TextMeshProUGUI[] _tileTexts;
+    [SerializeField] private string[] _shapes; // first shape should be empty
 
     [Header("Game State UI")]
     [SerializeField] TextMeshProUGUI gameStateText;
@@ -36,7 +39,7 @@ public class TicTacToeManager : MonoBehaviour
     {
         spaces = new int[9];
 
-        turn = 1;
+        _turn = 1;
 
         UpdateUI();
 
@@ -49,30 +52,26 @@ public class TicTacToeManager : MonoBehaviour
     {
         for (int i = 0; i < spaces.Length; i++)
         {
-            spaceText[i].text = spaceDisplayText[spaces[i]];
-            spaceText[i].color = spaceDisplayColor[spaces[i]];
+            _tileTexts[i].text = _shapes[spaces[i]];
         }
 
-        gameStateText.text = "Player " + turn + "'s Turn";
+        gameStateText.text = "Player " + _turn + "'s Turn";
     }
 
     public void SpaceClicked(int spaceClicked)
     {
-        if (turn != -1 &&
-            (turn == 1 || (turn == 2 && !player2AI)))
-        {
+        if (_turn != -1 && _turn == 1) // making sure it's the player's turn
             if (spaces[spaceClicked] == 0)
                 MakeMove(spaceClicked);
-        }
     }
 
     IEnumerator AIMove()
     {
-        yield return new WaitForSeconds(timeBetweenAIMove);
+        yield return new WaitForSeconds(_botMoveDelay);
 
-        if (player2AI && turn == 2)
+        if (_turn == 2)
         {
-            int depth = aiDepth[(int)aiLevel];
+            int depth = _botForeSightDepth[(int)_botLevel];
             minimax(spaces, depth, true, depth);
         }
     }
@@ -82,11 +81,11 @@ public class TicTacToeManager : MonoBehaviour
         int gameOver = CheckWin(currentSpaces);
         if (depth == 0 || gameOver != -1)
         {
-            if (gameOver == turn)
+            if (gameOver == _turn)
             {
                 return 1;
             }
-            else if (gameOver != turn && gameOver > 0)
+            else if (gameOver != _turn && gameOver > 0)
             {
                 return -1;
             }
@@ -109,7 +108,7 @@ public class TicTacToeManager : MonoBehaviour
                 {
                     newSpaces[space] = currentSpaces[space];
                 }
-                newSpaces[possibleMoves[i]] = turn;
+                newSpaces[possibleMoves[i]] = _turn;
 
                 int eval = minimax(newSpaces, depth - 1, false, initialDepth);
                 if (initialDepth == depth)
@@ -147,7 +146,7 @@ public class TicTacToeManager : MonoBehaviour
                 {
                     newSpaces[space] = currentSpaces[space];
                 }
-                newSpaces[possibleMoves[i]] = turn == 1 ? 2 : 1;
+                newSpaces[possibleMoves[i]] = _turn == 1 ? 2 : 1;
 
                 int eval = minimax(newSpaces, depth - 1, true, initialDepth);
                 minEval = Mathf.Min(minEval, eval);
@@ -159,8 +158,8 @@ public class TicTacToeManager : MonoBehaviour
 
     void MakeMove(int spaceToMove)
     {
-        spaces[spaceToMove] = turn;
-        turn = turn == 1 ? 2 : 1;
+        spaces[spaceToMove] = _turn;
+        _turn = _turn == 1 ? 2 : 1;
         UpdateUI();
 
         CheckEndGame();
@@ -212,7 +211,7 @@ public class TicTacToeManager : MonoBehaviour
 
     void EndGame()
     {
-        turn = -1;
+        _turn = -1;
 
         playAgainButton.SetActive(true);
     }
