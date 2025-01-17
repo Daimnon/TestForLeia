@@ -18,9 +18,9 @@ public class GameManager : MonoBehaviour
     [Header("Configuration")]
     [SerializeField] private int _turn = 1; // turn = 1 implies player 1 turn, same for player 2 aka the bot
     [SerializeField] private float _botMoveDelay = 0.4f;
-
     [SerializeField] private Difficulity _botLevel = Difficulity.Hard;
     [SerializeField] private int[] _botForeSightDepth = new int[4] { 1, 2, 4, 9 };
+    [SerializeField] private bool _useAlphaBetaPruning = false;
 
     [Header("Tiles")]
     [SerializeField] private TextMeshProUGUI[] _tileTexts;
