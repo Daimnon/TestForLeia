@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1047623817063436558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2628689847736399027}
+  - component: {fileID: 8505797265609068578}
+  m_Layer: 0
+  m_Name: BallPooler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2628689847736399027
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1047623817063436558}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.016409, y: 4.3192654, z: -0.06727503}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8505797265609068578
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1047623817063436558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fedfb6cbd38db245b187c1a0c742c72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefabs:
+  - {fileID: 3291946956033463480, guid: 7a5eb7a81083b724db4d4989465d911b, type: 3}
+  - {fileID: 8664509439507249452, guid: 80db120aa00f91a4f8df61d38215d31c, type: 3}
+  - {fileID: 3218077042258009018, guid: 1835fae91e3218e42b53f5dff80b54f4, type: 3}
+  - {fileID: 5100556579258511445, guid: f2cbdf31d3d0c1f41855ca0ccdf27fec, type: 3}
+  - {fileID: 899476418392828074, guid: f6433093f03534d43849a42f058d0143, type: 3}
+  - {fileID: 4522997403290044965, guid: ad7fda7e675355c4f89e319998e88fd5, type: 3}
+  - {fileID: 6118210081194461524, guid: da13e6cf3f8d2a54aa230dc89dcf5669, type: 3}
+  - {fileID: 1744382377666504276, guid: a1e0326476e29e54090e93e487815a43, type: 3}
+  - {fileID: 8296925216387603917, guid: e4738114c8e47914cb32910a945e231a, type: 3}
+  - {fileID: 4346526297149400618, guid: 4634083d4759e3343be9b7832ae4a003, type: 3}
+  - {fileID: 5686682005924715939, guid: 78698874f3eb4254f837cd7559335d63, type: 3}
+  _defaultCapacity: 20
