@@ -5,7 +5,7 @@ public static class EventSystem
 {
     #region GameLoop
     public static Action<bool> OnPause;
-    public static void InvokeCombo(bool isPaused)
+    public static void InvokePause(bool isPaused)
     {
         Debugger.Log($"Invoke: Pause.");
         OnPause?.Invoke(isPaused);

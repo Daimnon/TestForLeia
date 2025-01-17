@@ -42,6 +42,8 @@ public class BallDropper : MonoBehaviour
         ETouch.Touch.onFingerDown += OnFingerDown;
         ETouch.Touch.onFingerMove += OnFingerMove;
         ETouch.Touch.onFingerUp += OnFingerUp;
+
+        EventSystem.OnPause += OnPause;
     }
     private void OnDisable()
     {
@@ -49,6 +51,8 @@ public class BallDropper : MonoBehaviour
         ETouch.Touch.onFingerMove -= OnFingerMove;
         ETouch.Touch.onFingerUp -= OnFingerUp;
         ETouch.EnhancedTouchSupport.Disable();
+
+        EventSystem.OnPause -= OnPause;
     }
     private void Awake()
     {
@@ -153,5 +157,11 @@ public class BallDropper : MonoBehaviour
         _isThrowable = false;
 
         StartCoroutine(ChangeBallsRoutine()); // not tracked cause no need for now
+    }
+
+    private void OnPause(bool isPaused)
+    {
+        if (isPaused) enabled = false;
+        else enabled = true;
     }
 }

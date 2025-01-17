@@ -106,6 +106,7 @@ public class GameManager : MonoBehaviour
     }
     private void GameOver()
     {
+        Pause(true);
         _gameOverCanvas.SetActive(true);
     }
     private void ResetDeathTimer()
@@ -113,6 +114,20 @@ public class GameManager : MonoBehaviour
         _deathTimer = _deathTime;
         _isDeathTimerActive = false;
         _deathTimerHandler = null;
+    }
+
+    public void Pause(bool isPaused)
+    {
+        if (isPaused)
+        {
+            EventSystem.InvokePause(true);
+            _isPaused = true;
+        }
+        else
+        {
+            EventSystem.InvokePause(false);
+            _isPaused = false;
+        }
     }
 
     #region Events
