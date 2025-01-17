@@ -314,12 +314,12 @@ GameObject:
   m_Component:
   - component: {fileID: 605292172}
   m_Layer: 0
-  m_Name: ------- Cameras
+  m_Name: ----- Cameras
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &605292172
 Transform:
   m_ObjectHideFlags: 0
@@ -329,7 +329,7 @@ Transform:
   m_GameObject: {fileID: 605292171}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 523.3839, y: 1781.3176, z: -15.312333}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -863,12 +863,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1214466354}
   m_Layer: 0
-  m_Name: ------- Managers
+  m_Name: ----- Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1214466354
 Transform:
   m_ObjectHideFlags: 0
@@ -878,7 +878,7 @@ Transform:
   m_GameObject: {fileID: 1214466353}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 523.3839, y: 1781.3176, z: -15.312333}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -905,12 +905,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1344400308}
   m_Layer: 0
-  m_Name: ------- Systems
+  m_Name: ----- Systems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1344400308
 Transform:
   m_ObjectHideFlags: 0
@@ -920,7 +920,7 @@ Transform:
   m_GameObject: {fileID: 1344400307}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 523.3839, y: 1781.3176, z: -15.312333}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1036,12 +1036,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1469505440}
   m_Layer: 0
-  m_Name: ------- Lighting
+  m_Name: ----- Lighting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1469505440
 Transform:
   m_ObjectHideFlags: 0
@@ -1051,7 +1051,7 @@ Transform:
   m_GameObject: {fileID: 1469505439}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 523.3839, y: 1781.3176, z: -15.312333}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1067,12 +1067,12 @@ GameObject:
   m_Component:
   - component: {fileID: 1493547155}
   m_Layer: 0
-  m_Name: ------- Canvases
+  m_Name: ----- UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1493547155
 Transform:
   m_ObjectHideFlags: 0
@@ -1082,7 +1082,7 @@ Transform:
   m_GameObject: {fileID: 1493547154}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 523.3839, y: 1781.3176, z: -15.312333}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1119,13 +1119,13 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 519420032}
-  - {fileID: 619394802}
-  - {fileID: 798599615}
-  - {fileID: 803653726}
-  - {fileID: 1425305845}
   - {fileID: 1344400308}
+  - {fileID: 1425305845}
   - {fileID: 605292172}
+  - {fileID: 519420032}
   - {fileID: 1469505440}
+  - {fileID: 619394802}
   - {fileID: 1214466354}
+  - {fileID: 798599615}
   - {fileID: 1493547155}
+  - {fileID: 803653726}
