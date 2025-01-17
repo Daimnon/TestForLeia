@@ -5,9 +5,8 @@ using UnityEngine;
 
 public class TicTacToeManager : MonoBehaviour
 {
-    [Header("Game Info")]
-    [SerializeField] int turn = 1;
-    [SerializeField] bool player1AI = false;
+    [Header("Configuration")]
+    [SerializeField] int turn = 1; // turn = 1 implies player 1 turn, same for player 2
     [SerializeField] bool player2AI = false;
     [SerializeField] float timeBetweenAIMove;
 
@@ -60,7 +59,7 @@ public class TicTacToeManager : MonoBehaviour
     public void SpaceClicked(int spaceClicked)
     {
         if (turn != -1 &&
-            ((turn == 1 && !player1AI) || (turn == 2 && !player2AI)))
+            (turn == 1 || (turn == 2 && !player2AI)))
         {
             if (spaces[spaceClicked] == 0)
                 MakeMove(spaceClicked);
@@ -71,7 +70,7 @@ public class TicTacToeManager : MonoBehaviour
     {
         yield return new WaitForSeconds(timeBetweenAIMove);
 
-        if ((player1AI && turn == 1) || (player2AI && turn == 2))
+        if (player2AI && turn == 2)
         {
             int depth = aiDepth[(int)aiLevel];
             minimax(spaces, depth, true, depth);
