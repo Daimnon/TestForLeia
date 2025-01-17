@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:GalErez_TaichuKash_CoreMechanic_Leia/Assets/Scripts/Managers/GameManager.cs.meta
 guid: 1355bfc6a73980c4eae5d32a38d87938
+========
+guid: 73c9baec6065e8c4ba61beda8372a48a
+>>>>>>>> TicTacToe_Minimax_ABPruning:GalErez_TicTacToe_Minimax_ABPruning_Leia/Assets/GameManager.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

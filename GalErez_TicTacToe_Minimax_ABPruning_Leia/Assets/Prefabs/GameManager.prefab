@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1828750916714527297
+--- !u!1 &3912819750800219649
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3992120230843550426}
-  - component: {fileID: 8493474655736839354}
+  - component: {fileID: 3019601985633950437}
+  - component: {fileID: 4310583797306384397}
   m_Layer: 0
-  m_Name: PiecePooler
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3992120230843550426
+--- !u!4 &3019601985633950437
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1828750916714527297}
+  m_GameObject: {fileID: 3912819750800219649}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,19 +32,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8493474655736839354
+--- !u!114 &4310583797306384397
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1828750916714527297}
+  m_GameObject: {fileID: 3912819750800219649}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3fedfb6cbd38db245b187c1a0c742c72, type: 3}
+  m_Script: {fileID: 11500000, guid: 73c9baec6065e8c4ba61beda8372a48a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _xPrefab: {fileID: 3128071286875629667, guid: 9939ef634e16ef5428ce0cdcd10c5a54, type: 3}
-  _oPrefab: {fileID: 8202265662245967519, guid: e669f95084c5b394ba53082f7b8d7620, type: 3}
-  _defaultCapacity: 5
-  _maxSize: 5
+  _turn: 1
+  _botMoveDelay: 0.4
+  _botLevel: 3
+  _botForeSightDepth: 01000000020000000400000009000000
+  _tileTexts:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  _shapes:
+  - 
+  - x
+  - o
+  _turnTextTMP: {fileID: 0}
+  _againBtn: {fileID: 0}

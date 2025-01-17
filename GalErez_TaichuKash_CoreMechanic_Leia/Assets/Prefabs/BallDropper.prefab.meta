@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:GalErez_TaichuKash_CoreMechanic_Leia/Assets/Prefabs/BallDropper.prefab.meta
 guid: 54d58af61b3d14740a03f9f39bb4ac1f
+========
+guid: 1fefc31581212f345ba91c2997018939
+>>>>>>>> TicTacToe_Minimax_ABPruning:GalErez_TicTacToe_Minimax_ABPruning_Leia/Assets/Prefabs/Again_btn.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 

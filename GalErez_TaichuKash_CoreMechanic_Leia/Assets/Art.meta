@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:GalErez_TaichuKash_CoreMechanic_Leia/Assets/Art.meta
 guid: 564b3c32f4841fd44956f03034fb4bea
+========
+guid: a6b53751f9ee1414d9c1b80789edb858
+>>>>>>>> TicTacToe_Minimax_ABPruning:GalErez_TicTacToe_Minimax_ABPruning_Leia/Assets/Fonts.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

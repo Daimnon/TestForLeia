@@ -1,8 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:GalErez_TaichuKash_CoreMechanic_Leia/Assets/Materials/mat_lineRenderer.mat.meta
 guid: fd99eab214d906d4dab7de05a177864f
+========
+guid: bd64ed0cf47517142b98820d42940f14
+>>>>>>>> TicTacToe_Minimax_ABPruning:GalErez_TicTacToe_Minimax_ABPruning_Leia/Assets/Fonts/OpenSansRegular SDF.asset.meta
 NativeFormatImporter:
   externalObjects: {}
-  mainObjectFileID: 2100000
+  mainObjectFileID: 11400000
   userData: 
   assetBundleName: 
   assetBundleVariant: 

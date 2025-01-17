@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:GalErez_TaichuKash_CoreMechanic_Leia/Assets/Prefabs/Balls/Ball.prefab.meta
 guid: 1a191f05d667dd649886ba6c00bca722
+========
+guid: aa1dad152189f684c80c24807613efc4
+>>>>>>>> TicTacToe_Minimax_ABPruning:GalErez_TicTacToe_Minimax_ABPruning_Leia/Assets/Prefabs/Board.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 
