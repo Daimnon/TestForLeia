@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3019601985633950437}
   - component: {fileID: 4310583797306384397}
   m_Layer: 0
-  m_Name: Tic Tac Toe Manager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,14 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c9baec6065e8c4ba61beda8372a48a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turn: 1
-  player1AI: 0
-  player2AI: 1
-  timeBetweenAIMove: 0.4
-  aiLevel: 3
-  aiDepth: 01000000020000000400000009000000
-  spaces: 
-  spaceText:
+  _turn: 1
+  _botMoveDelay: 0.4
+  _botLevel: 3
+  _botForeSightDepth: 01000000020000000400000009000000
+  _tileTexts:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
@@ -61,13 +58,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  spaceDisplayText:
+  _shapes:
   - 
-  - X
-  - O
-  spaceDisplayColor:
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 0, g: 0, b: 1, a: 1}
-  gameStateText: {fileID: 0}
-  playAgainButton: {fileID: 0}
+  - x
+  - o
+  _turnTextTMP: {fileID: 0}
+  _againBtn: {fileID: 0}
