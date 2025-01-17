@@ -57,7 +57,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6193428585252396587}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -86,10 +86,11 @@ MonoBehaviour:
   _currentBallTr: {fileID: 1365567672855823930}
   _nextBallTr: {fileID: 6460081873876576996}
   _throwForce: 0
-  _delayBetweenThrows: 0.8
+  _delayBetweenThrows: 0.4
   _throwPreparationTime: 0.4
   _xConstraintNegative: -1.5
   _xConstraintPositive: 1.5
+  _seed: Dr. Robotnik
 --- !u!120 &4715703174840618957
 LineRenderer:
   serializedVersion: 2

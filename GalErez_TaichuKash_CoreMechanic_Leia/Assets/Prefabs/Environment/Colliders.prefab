@@ -276,6 +276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6194240858196858460}
   - component: {fileID: 5871304117813962717}
+  - component: {fileID: 2840189198594491495}
   m_Layer: 0
   m_Name: DeathLine_collider
   m_TagString: Death Line
@@ -343,3 +344,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.1}
   m_EdgeRadius: 0
+--- !u!114 &2840189198594491495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9172429405374031894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82764d5128b8ae643a5002d5da9417a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
