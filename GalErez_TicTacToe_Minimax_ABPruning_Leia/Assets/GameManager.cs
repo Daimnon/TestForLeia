@@ -5,10 +5,10 @@ using UnityEngine;
 
 public enum Difficulity
 { 
-    VeryEasy, 
     Easy, 
     Medium, 
-    Hard
+    Hard, 
+    Unbeatable // cannot be played with alpha pruning
 }
 
 public class GameManager : MonoBehaviour
@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Configuration")]
     [SerializeField] private float _botMoveDelay = 0.4f;
-    [SerializeField] private Difficulity _botLevel = Difficulity.Hard;
+    [SerializeField] private Difficulity _botLevel = Difficulity.Unbeatable;
     [SerializeField] private int[] _botForeSightDepth = new int[4] { 1, 2, 4, 9 };
     [SerializeField] private bool _useAlphaBetaPruning = false;
 
@@ -30,13 +30,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI[] _tileTexts;
 
     [Header("Game State UI")]
+    [SerializeField] private GameObject _overlay;
     [SerializeField] private TextMeshProUGUI _turnTextTMP;
+    [SerializeField] private TextMeshProUGUI _difficultyTextTMP;
+    [SerializeField] private TextMeshProUGUI _useABPurningTMP;
     [SerializeField] private GameObject _againBtn;
-
-    private void Start()
-    {
-        ResetGame();
-    }
 
     private void RandomizeShapes()
     {
@@ -47,6 +45,9 @@ public class GameManager : MonoBehaviour
     }
     private void ResetGame()
     {
+        if ((int)_botLevel > 2 && _useAlphaBetaPruning) _botLevel = Difficulity.Hard;
+        _difficultyTextTMP.text = _botLevel.ToString();
+
         RandomizeShapes();
 
         _board = new int[9];
@@ -284,6 +285,16 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    public void StartGame()
+    {
+        _overlay.SetActive(false);
+        ResetGame();
+    }
+    public void UsePruning()
+    {
+        _useAlphaBetaPruning = !_useAlphaBetaPruning;
+        _useABPurningTMP.text = _useAlphaBetaPruning ? "Yes" : "No";
+    }
     public void ChooseTile(int tileID)
     {
         if (_turn != -1 && _turn == 1) // making sure it's the player's turn
@@ -292,6 +303,14 @@ public class GameManager : MonoBehaviour
     }
     public void PlayAgain()
     {
-        ResetGame();
+        UnityEngine.SceneManagement.Scene scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+        UnityEngine.SceneManagement.SceneManager.LoadScene(scene.buildIndex);
+    }
+    public void ChangeDifficulty()
+    {
+        int nextDiff = (int)_botLevel + 1;
+        if (nextDiff > 3) _botLevel = Difficulity.Easy;
+        else _botLevel = (Difficulity)nextDiff;
+        _difficultyTextTMP.text = _botLevel.ToString();
     }
 }
